@@ -125,13 +125,14 @@ jr.traverseChildNodes = function(node) {
  *
  * This isn't quite a good idea... but it works.
  */
-jr.fireWhenReady = function() {
+jr.fireWhenReady = function(callback) {
 	var timeout, b=4;
 
 	if (typeof window.Showdown != 'undefined') {
 		jr.run(jr.markdownContent);
+		callback();
 	} else {
-		timeout = setTimeout(jr.fireWhenReady, 100);
+		timeout = setTimeout(function() {jr.fireWhenReady(callback)}, 100);
 	}
 };
 
@@ -264,11 +265,7 @@ function ajax(url, callback, data)
 };
 
 
-/*
- * Get this party started!
- */
-(function () {
-
+jr.initiateRun = function (options) {
 	// Load the article
 	jr.body = document.getElementsByTagName("body")[0];
 
@@ -291,9 +288,9 @@ function ajax(url, callback, data)
         jr.loadScript(scriptPath);
 	}
 
-	jr.fireWhenReady();
-
+	var callback = options.callback || function() {};
+	jr.fireWhenReady(callback);
+	
 	// If you want to *see* the pritty AJAX-spinner do this instead...
 	//setTimeout(jr.fireWhenReady, 1000);
-
-})();
+};
