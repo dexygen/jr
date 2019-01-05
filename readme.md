@@ -1,4 +1,4 @@
-# Welcome to Jr! (v1.2)
+# Welcome to upstaged, forked from Jr! (v1.2)
 
 A static, static content generator that moves the "generator" part to the browser.
 This site is pure text files with a single Javascript included on each page that renders
