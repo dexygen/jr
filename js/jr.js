@@ -24,7 +24,7 @@ var jr = {
 	],
 };
 
-jr.forkPath = "../engine/jr/"; // Gets prepended to script/style path
+jr.pathPrefix = "../content-genr/upstaged/"; // Gets prepended to script/style path
 
 // Plugins are defined below
 jr.body = null;
@@ -275,16 +275,16 @@ jr.initiateRun = function (options) {
 	// Empty the content in case it takes a while to parse the markdown (leaves a blank screen)
 	jr.body.innerHTML = '<div class="spinner"></div>';
 
-	var stylePath, scriptPath; // Prepend jr.forkPath to these, if it exists
+	var stylePath, scriptPath; // Prepend jr.pathPrefix to these, if it exists
 	
 	// Load styles first
 	for (var i = jr.styles.length - 1; i >= 0; i--) {
-        stylePath = jr.forkPath ? jr.forkPath + jr.styles[i] : jr.styles[i];
+        stylePath = jr.pathPrefix ? jr.pathPrefix + jr.styles[i] : jr.styles[i];
         jr.loadStyle(stylePath);
 	}
 
 	for (var i = jr.scripts.length - 1; i >= 0; i--) {
-        scriptPath = jr.forkPath ? jr.forkPath + jr.scripts[i] : jr.scripts[i];
+        scriptPath = jr.pathPrefix ? jr.pathPrefix + jr.scripts[i] : jr.scripts[i];
         jr.loadScript(scriptPath);
 	}
 
