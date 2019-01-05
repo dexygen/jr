@@ -1,4 +1,5 @@
 # Welcome to upstaged, forked from Jr: (v1.2)
+## Jr's concept is fantastic but the execution is lacking IMO
 ### the "stage" in upstaged standing for "static" (sta) "generator" (ge)
 
 A static, static content generator that moves the "generator" part to the browser.
