@@ -6,7 +6,7 @@ var jr = {
 	 * You can define content blocks to display in your theme
 	 */
 	blocks : {
-		'footer.html' : 'footer',
+		//'footer.html' : 'footer',
 		//'header.html' : 'header'
 	},
 	styles : [
@@ -24,6 +24,7 @@ var jr = {
 	],
 };
 
+jr.forkPath = "../engine/jr/"; // Gets prepended to script/style path
 
 // Plugins are defined below
 jr.body = null;
@@ -277,13 +278,17 @@ function ajax(url, callback, data)
 	// Empty the content in case it takes a while to parse the markdown (leaves a blank screen)
 	jr.body.innerHTML = '<div class="spinner"></div>';
 
+	var stylePath, scriptPath; // Prepend jr.forkPath to these, if it exists
+	
 	// Load styles first
 	for (var i = jr.styles.length - 1; i >= 0; i--) {
-		jr.loadStyle(jr.styles[i]);
+        stylePath = jr.forkPath ? jr.forkPath + jr.styles[i] : jr.styles[i];
+        jr.loadStyle(stylePath);
 	}
 
 	for (var i = jr.scripts.length - 1; i >= 0; i--) {
-		jr.loadScript(jr.scripts[i]);
+        scriptPath = jr.forkPath ? jr.forkPath + jr.scripts[i] : jr.scripts[i];
+        jr.loadScript(scriptPath);
 	}
 
 	jr.fireWhenReady();
