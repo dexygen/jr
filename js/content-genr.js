@@ -8,7 +8,6 @@ var upstaged = {
 		'themes/dexygen.css',
 		'themes/code.css'
 	],
-	pathPrefix: "../content-genr/upstaged/",
 	plugins: {
 		gist: function(gistId, element){
 			var callbackName = "gist_callback";
@@ -39,7 +38,7 @@ var upstaged = {
 				do {
 					// Recursively call traverseChildNodes on each child node
 					next = node.nextSibling;
-					upstaged.traverseChildNodes(node);
+					this.traverseChildNodes(node);
 				} while(node = next);
 			}
 
@@ -48,9 +47,9 @@ var upstaged = {
 			// (Text node)
 			node.data.replace(/\[(\w+):([^\]]+)\]/g, function(match, plugin, value) {
 			
-				if(upstaged.plugins[plugin]) {
+				if(this.plugins[plugin]) {
 
-					if(value = upstaged.plugins[plugin](value, node)) {
+					if(value = this.plugins[plugin](value, node)) {
 						if(typeof value === "string") {
 							node.data = node.data.replace(match, value);
 						} else if(typeof value === "Node") {
@@ -62,14 +61,17 @@ var upstaged = {
 			});
 		}
 	},
+	afterRender: function() {},
 	fireWhenReady: function(callback) {
 		var timeout, b=4;
 
 		if (typeof window.Showdown != 'undefined') {
-			upstaged.render(upstaged.markdownContent);
-			callback();
+			this.render(this.markdownContent);
+			this.afterRender();
 		} else {
-			timeout = setTimeout(function() {upstaged.fireWhenReady(callback)}, 100);
+			timeout = setTimeout(function() {
+				upstaged.fireWhenReady(upstaged.afterRender())
+			}, 100);
 		}
 	},
 	loadScript: function(src) {
@@ -111,7 +113,7 @@ var upstaged = {
 		// Attach an ID (based on URL) to the body container for CSS reasons
 		var id = window.location.pathname.replace(/\W+/g, '-').replace(/^\-|\-$/g, '');
 
-		upstaged.body.id = id || 'index';
+		this.body.id = id || 'index';
 
 		var converter = new Showdown.converter({extensions: ['github', 'prettify', 'table'] });
 
@@ -119,7 +121,7 @@ var upstaged = {
 		var html = converter.makeHtml(markdownContent);
 
 		// Basic HTML5 shell wrapped in a div
-		upstaged.body.innerHTML = '<div class="wrapper">\
+		this.body.innerHTML = '<div class="wrapper">\
 			<header></header>\
 			<main role="main">\
 				<article>' + html + '</article>\
@@ -152,12 +154,12 @@ var upstaged = {
 		}
 
 		// Load content blocks and inject them where needed
-		for (var file in upstaged.blocks) {
-			upstaged.loadBlock(file, upstaged.blocks[file]);
+		for (var file in this.blocks) {
+			this.loadBlock(file, this.blocks[file]);
 		}
 
 		// Allow plugins to process shortcode embeds
-		upstaged.traverseChildNodes(upstaged.body);
+		this.traverseChildNodes(this.body);
 
 		// Look for dates in Header elements
 		for (var x in {'h2':0,'h3':0,'h4':0,'h5':0}) {
@@ -179,32 +181,35 @@ var upstaged = {
 		setTimeout(function() { prettyPrint(); }, 500);
 	},
 	run: function (options) {
+		for (var option in options) {
+			upstaged[option] = options[option];
+		}
+		
 		// Load the article
-		upstaged.body = document.getElementsByTagName("body")[0];
+		this.body = document.getElementsByTagName("body")[0];
 
 		// Save the markdown for after we load the parser
-		upstaged.markdownContent = upstaged.body.innerHTML;
+		this.markdownContent = this.body.innerHTML;
 
 		// Empty the content in case it takes a while to parse the markdown (leaves a blank screen)
-		upstaged.body.innerHTML = '<div class="spinner"></div>';
+		this.body.innerHTML = '<div class="spinner"></div>';
 
-		var stylePath, scriptPath; // Prepend upstaged.pathPrefix to these, if it exists
+		var stylePath, scriptPath; // Prepend this.pathPrefix to these, if it exists
 		
 		// Load styles first
-		for (var i = upstaged.styles.length - 1; i >= 0; i--) {
-			stylePath = upstaged.pathPrefix ? upstaged.pathPrefix + upstaged.styles[i] : upstaged.styles[i];
-			upstaged.loadStyle(stylePath);
+		for (var i = this.styles.length - 1; i >= 0; i--) {
+			stylePath = this.pathPrefix ? this.pathPrefix + this.styles[i] : this.styles[i];
+			this.loadStyle(stylePath);
 		}
 
-		for (var i = upstaged.scripts.length - 1; i >= 0; i--) {
-			scriptPath = upstaged.pathPrefix ? upstaged.pathPrefix + upstaged.scripts[i] : upstaged.scripts[i];
-			upstaged.loadScript(scriptPath);
+		for (var i = this.scripts.length - 1; i >= 0; i--) {
+			scriptPath = this.pathPrefix ? this.pathPrefix + this.scripts[i] : this.scripts[i];
+			this.loadScript(scriptPath);
 		}
-
-		var callback = options.callback || function() {};
-		upstaged.fireWhenReady(callback);
+		
+		this.fireWhenReady();
 		
 		// If you want to *see* the pritty AJAX-spinner do this instead...
-		//setTimeout(upstaged.fireWhenReady, 1000);
+		//setTimeout(this.fireWhenReady, 1000);
 	}
 };
