@@ -1,13 +1,31 @@
 var upstaged = {
+	/*
+		Many of these attributes are now left empty but are configurable from the html, e.g.
+		upstaged.run({
+			afterRender: function() {
+			  document.title = "Dexygen: Occasionally Profound";
+			},
+			pathPrefix: "../content-genr/upstaged/"
+		});
+		
+		upstaged.scripts will always need showdown.js, this block can be augmented in the
+		configuration passed to run as follows:
+		
+		scripts: (function() {
+		    scripts = upstaged.scripts;
+			scripts.push('example.js');
+			return scripts;
+		})()
+	*/
 	blocks: [],
 	scripts: [
 		'js/showdown.js',
 		'js/prettify.js'
 	],
-	styles: [
-		'themes/dexygen.css',
-		'themes/code.css'
-	],
+	styles: [],
+	pathPrefix: "",
+    afterRender: function() {},
+	
 	plugins: {
 		gist: function(gistId, element){
 			var callbackName = "gist_callback";
@@ -61,7 +79,6 @@ var upstaged = {
 			});
 		}
 	},
-	afterRender: function() {},
 	fireWhenReady: function(callback) {
 		var timeout, b=4;
 
