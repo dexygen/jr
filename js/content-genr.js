@@ -1,7 +1,7 @@
 /*
  * Master Top Global Root Base Special Parent Object.... thingy
  */
-var jr = {
+var upstaged = {
 	/*
 	 * You can define content blocks to display in your theme
 	 */
@@ -24,17 +24,17 @@ var jr = {
 	],
 };
 
-jr.pathPrefix = "../content-genr/upstaged/"; // Gets prepended to script/style path
+upstaged.pathPrefix = "../content-genr/upstaged/"; // Gets prepended to script/style path
 
 // Plugins are defined below
-jr.body = null;
-jr.markdownContent = null;
-jr.plugins = {}
+upstaged.body = null;
+upstaged.markdownContent = null;
+upstaged.plugins = {}
 
 /**
- * Jr. Plugins go here
+ * Upstaged Plugins go here
  */
-jr.plugins.date = function(value) {
+upstaged.plugins.date = function(value) {
 	try {
 		var date = new Date(Date.parse(value));
 		if(date) {
@@ -45,7 +45,7 @@ jr.plugins.date = function(value) {
 	}
 }
 
-jr.plugins.time = function(value) {
+upstaged.plugins.time = function(value) {
 	try {
 		var date = new Date(Date.parse(value));
 		if(date) {
@@ -56,7 +56,7 @@ jr.plugins.time = function(value) {
 	}
 }
 
-jr.plugins.gist = function(gistId, element){
+upstaged.plugins.gist = function(gistId, element){
 	var callbackName = "gist_callback";
 	window[callbackName] = function (gistData) {
 		
@@ -84,7 +84,7 @@ jr.plugins.gist = function(gistId, element){
 /**
  * Used to replace short codes in articles with strings or DOM elements
  */
-jr.traverseChildNodes = function(node) {
+upstaged.traverseChildNodes = function(node) {
 	var next;
 
 	if (node.nodeType === 1) {
@@ -94,7 +94,7 @@ jr.traverseChildNodes = function(node) {
 			do {
 				// Recursively call traverseChildNodes on each child node
 				next = node.nextSibling;
-				jr.traverseChildNodes(node);
+				upstaged.traverseChildNodes(node);
 			} while(node = next);
 		}
 
@@ -103,9 +103,9 @@ jr.traverseChildNodes = function(node) {
 		// (Text node)
 		node.data.replace(/\[(\w+):([^\]]+)\]/g, function(match, plugin, value) {
 		
-			if(jr.plugins[plugin]) {
+			if(upstaged.plugins[plugin]) {
 
-				if(value = jr.plugins[plugin](value, node)) {
+				if(value = upstaged.plugins[plugin](value, node)) {
 					if(typeof value === "string") {
 						node.data = node.data.replace(match, value);
 					} else if(typeof value === "Node") {
@@ -125,19 +125,19 @@ jr.traverseChildNodes = function(node) {
  *
  * This isn't quite a good idea... but it works.
  */
-jr.fireWhenReady = function(callback) {
+upstaged.fireWhenReady = function(callback) {
 	var timeout, b=4;
 
 	if (typeof window.Showdown != 'undefined') {
-		jr.run(jr.markdownContent);
+		upstaged.run(upstaged.markdownContent);
 		callback();
 	} else {
-		timeout = setTimeout(function() {jr.fireWhenReady(callback)}, 100);
+		timeout = setTimeout(function() {upstaged.fireWhenReady(callback)}, 100);
 	}
 };
 
 // Also: http://stackoverflow.com/a/7719185/99923
-jr.loadScript = function(src) {
+upstaged.loadScript = function(src) {
 	var s = document.createElement('script');
 	s.type = 'text/javascript';
 	s.async = true;
@@ -146,7 +146,7 @@ jr.loadScript = function(src) {
 	head.appendChild(s);
 };
 
-jr.loadStyle = function(href, media) {
+upstaged.loadStyle = function(href, media) {
 	var s = document.createElement('link');
 	s.type = 'text/css';
 	s.media = media || 'all';
@@ -156,7 +156,7 @@ jr.loadStyle = function(href, media) {
 	head.appendChild(s);
 };
 
-jr.loadBlock = function(file, selector) {
+upstaged.loadBlock = function(file, selector) {
 	ajax(file, function(html) {
 		if( ! html) {
 			html = 'error loading ' + file;
@@ -175,12 +175,12 @@ jr.loadBlock = function(file, selector) {
 	});
 }
 
-jr.run = function(markdownContent) {
+upstaged.run = function(markdownContent) {
 
 	// Attach an ID (based on URL) to the body container for CSS reasons
 	var id = window.location.pathname.replace(/\W+/g, '-').replace(/^\-|\-$/g, '');
 
-	jr.body.id = id || 'index';
+	upstaged.body.id = id || 'index';
 
 	var converter = new Showdown.converter({extensions: ['github', 'prettify', 'table'] });
 
@@ -188,7 +188,7 @@ jr.run = function(markdownContent) {
 	var html = converter.makeHtml(markdownContent);
 
 	// Basic HTML5 shell wrapped in a div
-	jr.body.innerHTML = '<div class="wrapper">\
+	upstaged.body.innerHTML = '<div class="wrapper">\
 		<header></header>\
 		<main role="main">\
 			<article>' + html + '</article>\
@@ -221,12 +221,12 @@ jr.run = function(markdownContent) {
 	}
 
 	// Load content blocks and inject them where needed
-	for (var file in jr.blocks) {
-		jr.loadBlock(file, jr.blocks[file]);
+	for (var file in upstaged.blocks) {
+		upstaged.loadBlock(file, upstaged.blocks[file]);
 	}
 
 	// Allow plugins to process shortcode embeds
-	jr.traverseChildNodes(jr.body);
+	upstaged.traverseChildNodes(upstaged.body);
 
 	// Look for dates in Header elements
 	for (var x in {'h2':0,'h3':0,'h4':0,'h5':0}) {
@@ -265,32 +265,32 @@ function ajax(url, callback, data)
 };
 
 
-jr.initiateRun = function (options) {
+upstaged.initiateRun = function (options) {
 	// Load the article
-	jr.body = document.getElementsByTagName("body")[0];
+	upstaged.body = document.getElementsByTagName("body")[0];
 
 	// Save the markdown for after we load the parser
-	jr.markdownContent = jr.body.innerHTML;
+	upstaged.markdownContent = upstaged.body.innerHTML;
 
 	// Empty the content in case it takes a while to parse the markdown (leaves a blank screen)
-	jr.body.innerHTML = '<div class="spinner"></div>';
+	upstaged.body.innerHTML = '<div class="spinner"></div>';
 
-	var stylePath, scriptPath; // Prepend jr.pathPrefix to these, if it exists
+	var stylePath, scriptPath; // Prepend upstaged.pathPrefix to these, if it exists
 	
 	// Load styles first
-	for (var i = jr.styles.length - 1; i >= 0; i--) {
-        stylePath = jr.pathPrefix ? jr.pathPrefix + jr.styles[i] : jr.styles[i];
-        jr.loadStyle(stylePath);
+	for (var i = upstaged.styles.length - 1; i >= 0; i--) {
+        stylePath = upstaged.pathPrefix ? upstaged.pathPrefix + upstaged.styles[i] : upstaged.styles[i];
+        upstaged.loadStyle(stylePath);
 	}
 
-	for (var i = jr.scripts.length - 1; i >= 0; i--) {
-        scriptPath = jr.pathPrefix ? jr.pathPrefix + jr.scripts[i] : jr.scripts[i];
-        jr.loadScript(scriptPath);
+	for (var i = upstaged.scripts.length - 1; i >= 0; i--) {
+        scriptPath = upstaged.pathPrefix ? upstaged.pathPrefix + upstaged.scripts[i] : upstaged.scripts[i];
+        upstaged.loadScript(scriptPath);
 	}
 
 	var callback = options.callback || function() {};
-	jr.fireWhenReady(callback);
+	upstaged.fireWhenReady(callback);
 	
 	// If you want to *see* the pritty AJAX-spinner do this instead...
-	//setTimeout(jr.fireWhenReady, 1000);
+	//setTimeout(upstaged.fireWhenReady, 1000);
 };
