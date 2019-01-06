@@ -11,7 +11,7 @@ var upstaged = {
 	},
 	styles : [
 		// Choose a theme CSS
-		'themes/default.css',
+		'themes/dexygen.css',
 		//'themes/simple.css',
 		// Plus the code CSS if you have a programming blog
 		'themes/code.css',
