@@ -29,7 +29,6 @@ var upstaged = (function() {
 		styles: [],
 		pathPrefix: "",
 		afterRender: function() {},
-		
 		plugins: {
 			gist: function(gistId, element){
 				var callbackName = "gist_callback";
@@ -87,7 +86,6 @@ var upstaged = (function() {
 		onPrettifyJsLoaded: function() {},
 		loadScript: function(src) {
 			var s = document.createElement('script');
-			var interval;
 			
 			s.type = 'text/javascript';
 			s.async = true;
@@ -101,7 +99,7 @@ var upstaged = (function() {
 						upstaged.onPrettifyJsLoaded = function() {prettyPrint()};
 					}
 				}
-				if (src === showdownJs) {
+				else if (src === showdownJs) {
 					upstaged.render(upstaged.markdownContent);
 					upstaged.isRendered = true;
 					upstaged.onPrettifyJsLoaded();
