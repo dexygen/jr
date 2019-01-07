@@ -84,6 +84,7 @@ var upstaged = (function() {
 			}
 		},
 		isRendered: false,
+		onPrettifyJsLoaded: function() {},
 		loadScript: function(src) {
 			var s = document.createElement('script');
 			var interval;
@@ -93,17 +94,17 @@ var upstaged = (function() {
 			s.src = src;
 			s.onload = (function() {
 				if (src === prettifyJs) {
-					interval = setInterval(function() {
-						if (upstaged.isRendered) {
-							clearInterval(interval);
-							// Highlight any code out there
-							prettyPrint();
-						}
-					}, 25);
+					if (upstaged.isRendered)  {
+						prettyPrint();
+					}
+					else {
+						upstaged.onPrettifyJsLoaded = function() {prettyPrint()};
+					}
 				}
 				if (src === showdownJs) {
 					upstaged.render(upstaged.markdownContent);
 					upstaged.isRendered = true;
+					upstaged.onPrettifyJsLoaded();
 					upstaged.afterRender();					
 				}
 			});
