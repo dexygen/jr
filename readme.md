@@ -1,9 +1,11 @@
 # Welcome to upstaged, forked from Jr: (v1.2)
-## the "stage" in upstaged standing for "static" (sta) "generator" (ge)
+## The "stage" in upstaged standing for "static" (sta) "generator" (ge)
 ### Jr's concept is fantastic but the execution and organization is, in some areas, somewhat lacking e.g. 
 
 - it cannot be configured by passing in an object
 - it relies on timers to determine when scripts are loaded, instead of the onload event
+
+#### The original README follows
 
 A static, static content generator that moves the "generator" part to the browser.
 This site is pure text files with a single Javascript included on each page that renders
