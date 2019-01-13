@@ -137,24 +137,15 @@ var upstaged = (function() {
 			});
 		},
 		render: function(markdownContent) {
-			// Attach an ID (based on URL) to the body container for CSS reasons
-			var id = window.location.pathname.replace(/\W+/g, '-').replace(/^\-|\-$/g, '');
-
-			this.body.id = id || 'index';
-
 			var converter = new Showdown.converter({extensions: ['github', 'prettify', 'table'] });
-
-			// Convert to HTML
 			var html = converter.makeHtml(markdownContent);
-
-			// Basic HTML5 shell wrapped in a div
-			this.body.innerHTML = '<div class="wrapper">\
-				<header></header>\
+			
+			this.mdHolder.innerHTML = '<div class="wrapper">\
 				<main role="main">\
-					<article>' + html + '</article>\
+				<article>' + html + '</article>\
 				</main>\
-				<footer></footer>\
-			</div>';
+            </div>';
+
 
 			// Find all background images and put them in the right elements
 			var images = document.getElementsByTagName('main')[0].getElementsByTagName('img');
@@ -186,7 +177,7 @@ var upstaged = (function() {
 			}
 
 			// Allow plugins to process shortcode embeds
-			this.traverseChildNodes(this.body);
+			this.traverseChildNodes(this.mdHolder);
 
 			// Look for dates in Header elements
 			for (var x in {'h2':0,'h3':0,'h4':0,'h5':0}) {
@@ -203,9 +194,6 @@ var upstaged = (function() {
 			if(el.length && el[0]) {
 				document.title = el[0].innerHTML;
 			}
-
-			// Highlight any code out there (wait for it to load)
-			setTimeout(function() { prettyPrint(); }, 500);
 		},
 		run: function (options) {
 			for (var option in options) {
@@ -213,13 +201,13 @@ var upstaged = (function() {
 			}
 			
 			// Load the article
-			this.body = document.getElementsByTagName("body")[0];
+			this.mdHolder = document.querySelector(this.mdHolderQuerySel); //document.getElementsByTagName("body")[0];
 
 			// Save the markdown for after we load the parser
-			this.markdownContent = this.body.innerHTML;
+			this.markdownContent = this.mdHolder.innerHTML;
 
 			// Empty the content in case it takes a while to parse the markdown (leaves a blank screen)
-			this.body.innerHTML = '<div class="spinner"></div>';
+			this.mdHolder.innerHTML = '<div class="spinner"></div>';
 
 			var stylePath, scriptPath; // Prepend this.pathPrefix to these, if it exists
 			
